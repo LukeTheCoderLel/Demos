@@ -56,10 +56,37 @@ export const DownloadIcon = (p: P) => (
 export const FilterIcon = (p: P) => (
   <svg {...base(p)}><path d="M4 6h16M7 12h10M10 18h4" /></svg>
 )
+export const CheckIcon = (p: P) => (
+  <svg {...base(p)}><path d="m5 12.5 4.5 4.5L19 7.5" /></svg>
+)
+export const CopyIcon = (p: P) => (
+  <svg {...base(p)}><rect x="9" y="9" width="12" height="12" rx="2.5" /><path d="M5 15H4.5A1.5 1.5 0 0 1 3 13.5v-9A1.5 1.5 0 0 1 4.5 3h9A1.5 1.5 0 0 1 15 4.5V5" /></svg>
+)
+export const ExternalIcon = (p: P) => (
+  <svg {...base(p)}><path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" /></svg>
+)
+export const MailIcon = (p: P) => (
+  <svg {...base(p)}><rect x="3" y="5" width="18" height="14" rx="2.5" /><path d="m3.5 6.5 8.5 6.5 8.5-6.5" /></svg>
+)
+export const PinIcon = (p: P) => (
+  <svg {...base(p)}><path d="M12 21s-7-6.2-7-11.5a7 7 0 0 1 14 0C19 14.8 12 21 12 21Z" /><circle cx="12" cy="9.5" r="2.5" /></svg>
+)
+export const SendIcon = (p: P) => (
+  <svg {...base(p)}><path d="M21 3 10.5 13.5M21 3l-6.5 18-4-7.5L3 9.5 21 3Z" /></svg>
+)
 export const LogoMark = (p: P) => (
   <svg {...base(p)} viewBox="0 0 32 32" stroke="none">
-    <rect width="32" height="32" rx="9" fill="#8B5CF6" />
-    <g fill="#fff">
+    <defs>
+      <linearGradient id="dv-gold" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stopColor="#F8E7A6" />
+        <stop offset=".45" stopColor="#D4AF37" />
+        <stop offset=".75" stopColor="#9C7A1E" />
+        <stop offset="1" stopColor="#F1D57E" />
+      </linearGradient>
+    </defs>
+    <rect width="32" height="32" rx="9" fill="#0B0B0C" />
+    <rect x=".75" y=".75" width="30.5" height="30.5" rx="8.4" fill="none" stroke="url(#dv-gold)" strokeWidth="1.5" />
+    <g fill="url(#dv-gold)">
       <rect x="7" y="13" width="3" height="6" rx="1.5" />
       <rect x="12" y="9" width="3" height="14" rx="1.5" />
       <rect x="17" y="6" width="3" height="20" rx="1.5" />

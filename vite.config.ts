@@ -12,9 +12,9 @@ export default defineConfig({
       manifest: {
         name: 'Demo Vault',
         short_name: 'Demos',
-        description: 'Organize, play and keep track of your music demos.',
-        theme_color: '#fafafa',
-        background_color: '#fafafa',
+        description: 'Your private demo vault and direct line to house music labels.',
+        theme_color: '#050505',
+        background_color: '#050505',
         display: 'standalone',
         start_url: '/',
         icons: [

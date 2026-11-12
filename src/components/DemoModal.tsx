@@ -7,7 +7,9 @@ import { player, usePlayer } from '../lib/player'
 import type { Demo } from '../types'
 import { Cover } from './Cover'
 import { DemoFields, type FieldValues } from './DemoFields'
-import { CloseIcon, DownloadIcon, HeartIcon, PauseIcon, PlayIcon, TrashIcon } from './Icons'
+import { CloseIcon, DownloadIcon, HeartIcon, PauseIcon, PlayIcon, SendIcon, TrashIcon } from './Icons'
+import { LABELS } from '../data/labels'
+import { usePitch } from '../lib/pitch'
 import { Waveform } from './Waveform'
 
 interface Props {
@@ -18,6 +20,7 @@ interface Props {
   genres: string[]
   tags: string[]
   onClose: () => void
+  onPitch: () => void
   onChanged: (demo: Demo) => void
   onDeleted: (demo: Demo) => void
 }
@@ -35,7 +38,9 @@ const pick = (d: Demo): FieldValues => ({
   rating: d.rating,
 })
 
-export function DemoModal({ demo, coverUrl, queue, backend, genres, tags, onClose, onChanged, onDeleted }: Props) {
+export function DemoModal({ demo, coverUrl, queue, backend, genres, tags, onClose, onPitch, onChanged, onDeleted }: Props) {
+  const { log } = usePitch()
+  const sentLabels = LABELS.filter((l) => log[l.id]?.some((s) => s.demoId === demo.id))
   const [fields, setFields] = useState(() => pick(demo))
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
@@ -140,6 +145,10 @@ export function DemoModal({ demo, coverUrl, queue, backend, genres, tags, onClos
                 {isPlaying ? <PauseIcon /> : <PlayIcon />}
                 {isPlaying ? 'Pause' : 'Play'}
               </button>
+              <button className="btn ghost round" onClick={onPitch}>
+                <SendIcon width={16} height={16} />
+                Submit to labels
+              </button>
               <button className={`icon-btn fav ${demo.favorite ? 'on' : ''}`} onClick={toggleFav} aria-label="Favorite">
                 <HeartIcon filled={demo.favorite} />
               </button>
@@ -150,6 +159,12 @@ export function DemoModal({ demo, coverUrl, queue, backend, genres, tags, onClos
                 <TrashIcon />
               </button>
             </div>
+            {sentLabels.length > 0 && (
+              <p className="detail-sent">
+                Sent to <b>{sentLabels.length}</b> {sentLabels.length === 1 ? 'label' : 'labels'}:{' '}
+                {sentLabels.map((l) => l.name).join(', ')}
+              </p>
+            )}
           </div>
         </section>
 

@@ -1,14 +1,14 @@
 import type { Demo } from '../types'
 
-// Soft gradients for demos without art — picked deterministically from the id
+// Black-and-gold gradients for demos without art — picked deterministically from the id
 // so a track always gets the same one.
 const GRADIENTS = [
-  ['#c4b5fd', '#8b5cf6'],
-  ['#a5b4fc', '#6366f1'],
-  ['#f0abfc', '#a855f7'],
-  ['#ddd6fe', '#7c3aed'],
-  ['#c7d2fe', '#a78bfa'],
-  ['#e9d5ff', '#9333ea'],
+  ['#3a2f12', '#0b0b0c'],
+  ['#5a4517', '#121212'],
+  ['#2a2416', '#000000'],
+  ['#6b5420', '#1a1407'],
+  ['#1c1c1e', '#3d3015'],
+  ['#4a3a14', '#0e0e10'],
 ]
 
 function hash(s: string) {

@@ -9,12 +9,14 @@ import { supabase } from './lib/supabase'
 import { STATUSES, type Demo, type Status } from './types'
 import { DemoCard } from './components/DemoCard'
 import { DemoModal } from './components/DemoModal'
-import { FilterIcon, HeartIcon, LogoMark, PlusIcon, SearchIcon } from './components/Icons'
+import { FilterIcon, HeartIcon, LogoMark, PlusIcon, SearchIcon, SendIcon } from './components/Icons'
+import { LabelsView } from './components/LabelsView'
 import { Login } from './components/Login'
 import { PlayerBar } from './components/PlayerBar'
 import { UploadModal } from './components/UploadModal'
 
 type Sort = 'newest' | 'oldest' | 'title' | 'bpm' | 'rating'
+type View = 'vault' | 'labels'
 
 interface Filters {
   q: string
@@ -73,6 +75,15 @@ function Library({ backend }: { backend: Backend }) {
   const [uploading, setUploading] = useState<File[] | null>(null)
   const [dragging, setDragging] = useState(false)
   const [localNote, setLocalNote] = useState(() => readPref('dv.localNote', 'show') === 'show')
+  const [view, setView] = useState<View>(() => readPref<View>('dv.view', 'vault'))
+  const [labelQuery, setLabelQuery] = useState('')
+  const [pitchId, setPitchId] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem('dv.pitchDemo')
+    } catch {
+      return null
+    }
+  })
 
   const refresh = useCallback(async () => {
     try {
@@ -107,8 +118,12 @@ function Library({ backend }: { backend: Backend }) {
   useEffect(() => {
     try {
       localStorage.setItem('dv.sort', sort)
+      localStorage.setItem('dv.view', view)
+      if (pitchId) localStorage.setItem('dv.pitchDemo', pitchId)
+      else localStorage.removeItem('dv.pitchDemo')
     } catch { /* storage unavailable */ }
-  }, [sort])
+  }, [sort, view, pitchId])
+
 
   // Drop audio anywhere on the page to start an upload.
   useEffect(() => {
@@ -204,6 +219,23 @@ function Library({ backend }: { backend: Backend }) {
     }
   }
 
+  // Logging a submission moves a WIP/Ready demo to "Sent".
+  async function markDemoSent(demo: Demo) {
+    if (demo.status === 'Sent' || demo.status === 'Signed') return
+    try {
+      upsert(await backend.update(demo.id, { status: 'Sent' }))
+    } catch (e) {
+      console.error(e)
+    }
+  }
+
+  function pitchDemo(id: string) {
+    setPitchId(id)
+    setOpenId(null)
+    setView('labels')
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
   const open = demos.find((d) => d.id === openId)
   const set = <K extends keyof Filters>(k: K, v: Filters[K]) => setFilters((f) => ({ ...f, [k]: v }))
 
@@ -211,17 +243,37 @@ function Library({ backend }: { backend: Backend }) {
     <div className="app">
       <header className="topbar">
         <div className="brand">
-          <LogoMark width={32} height={32} />
-          <span>Demo Vault</span>
+          <LogoMark width={36} height={36} />
+          <span className="brand-name">
+            <b className="gold-text">Demo Vault</b>
+            <small>Private members</small>
+          </span>
         </div>
+        <nav className="tabs" aria-label="Sections">
+          <button className={view === 'vault' ? 'active' : ''} onClick={() => setView('vault')}>
+            The Vault
+          </button>
+          <button className={view === 'labels' ? 'active' : ''} onClick={() => setView('labels')}>
+            <SendIcon width={14} height={14} /> Label Room
+          </button>
+        </nav>
         <div className="search">
           <SearchIcon width={18} height={18} />
-          <input
-            type="search"
-            placeholder="Search title, artist, #tag, key…"
-            value={filters.q}
-            onChange={(e) => set('q', e.target.value)}
-          />
+          {view === 'vault' ? (
+            <input
+              type="search"
+              placeholder="Search title, artist, #tag, key…"
+              value={filters.q}
+              onChange={(e) => set('q', e.target.value)}
+            />
+          ) : (
+            <input
+              type="search"
+              placeholder="Search labels, cities, founders…"
+              value={labelQuery}
+              onChange={(e) => setLabelQuery(e.target.value)}
+            />
+          )}
         </div>
         <div className="topbar-actions">
           <button className="btn primary" onClick={() => setUploading([])}>
@@ -239,8 +291,8 @@ function Library({ backend }: { backend: Backend }) {
       {backend.mode === 'local' && localNote && (
         <div className="banner">
           <span>
-            <strong>Local mode.</strong> Demos are saved in this browser only. Add your Supabase keys to sync between
-            phone and computer (see README).
+            <strong>Private vault.</strong> Your demos and full-size WAVs stay on this device. Nothing is uploaded
+            anywhere.
           </span>
           <button
             className="link-btn"
@@ -257,9 +309,21 @@ function Library({ backend }: { backend: Backend }) {
       )}
 
       <main className="content">
+        {view === 'labels' ? (
+          <LabelsView
+            demos={demos}
+            covers={covers}
+            demoId={demos.some((d) => d.id === pitchId) ? pitchId : null}
+            onDemoChange={setPitchId}
+            query={labelQuery}
+            onSent={(d) => void markDemoSent(d)}
+          />
+        ) : (
+        <>
         <section className="summary">
           <div>
-            <h1>Your demos</h1>
+            <p className="eyebrow">Your collection</p>
+            <h1>The Vault</h1>
             <p className="muted">
               {demos.length} {demos.length === 1 ? 'demo' : 'demos'}
               {STATUSES.filter((s) => counts[s]).map((s) => (
@@ -374,6 +438,8 @@ function Library({ backend }: { backend: Backend }) {
             ))}
           </div>
         )}
+        </>
+        )}
       </main>
 
       <PlayerBar coverUrls={covers} onOpen={setOpenId} />
@@ -388,6 +454,7 @@ function Library({ backend }: { backend: Backend }) {
           genres={genres}
           tags={tags}
           onClose={() => setOpenId(null)}
+          onPitch={() => pitchDemo(open.id)}
           onChanged={upsert}
           onDeleted={(d) => {
             setOpenId(null)

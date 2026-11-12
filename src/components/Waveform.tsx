@@ -28,8 +28,8 @@ export function Waveform({ demo, queue, height = 56 }: Props) {
     const ws = WaveSurfer.create({
       container: el.current,
       height,
-      waveColor: '#d9d6e3',
-      progressColor: '#8b5cf6',
+      waveColor: '#3a3631',
+      progressColor: '#d4af37',
       cursorWidth: 0,
       barWidth: 2,
       barGap: 1.5,
