@@ -49,6 +49,7 @@ body {
     var(--bg);
   background-attachment: fixed;
 }
+body::before { content: ''; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 25; background: var(--bg); }
 button, input, select, textarea { font: inherit; color: inherit; }
 button { cursor: pointer; background: none; border: 0; padding: 0; }
 button:disabled { cursor: default; opacity: .4; }
@@ -93,10 +94,9 @@ h1, h2, h3, p { margin: 0; }
 
 /* ---------- Top bar ---------- */
 .topbar {
-  position: sticky; top: 0; z-index: 20;
+  position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20;
   display: flex; align-items: center; gap: 16px;
-  padding: 12px max(20px, env(safe-area-inset-left));
-  padding-top: max(12px, env(safe-area-inset-top));
+  padding: 12px max(20px, env(safe-area-inset-right, 0px)) 12px max(20px, env(safe-area-inset-left, 0px));
   background: rgb(5 5 5 / 78%);
   backdrop-filter: saturate(160%) blur(18px);
   -webkit-backdrop-filter: saturate(160%) blur(18px);
@@ -408,6 +408,9 @@ select option { background: #111; color: var(--text); }
 .stat-row { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .stat-row span { padding: 4px 10px; border-radius: 8px; background: var(--surface-2); border: 1px solid var(--line); font-size: 13px; font-weight: 600; color: #cfc9bb; }
 .detail-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.confirm-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 6px; padding: 10px 12px; border-radius: 12px; border: 1px solid rgb(240 93 108 / 40%); background: rgb(240 93 108 / 8%); font-size: 13px; }
+.confirm-row span { flex: 1 1 200px; }
+.btn.danger { background: var(--danger); color: #fff; }
 .detail-sent { font-size: 13px; color: var(--muted); }
 .detail-sent b { color: var(--gold-text); }
 .detail-form { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--line); }

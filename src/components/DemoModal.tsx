@@ -25,6 +25,9 @@ interface Props {
   onDeleted: (demo: Demo) => void
 }
 
+// Hosted pages can't start file downloads, so the Download button is hidden there.
+const HOSTED = import.meta.env.MODE === 'artifact'
+
 const pick = (d: Demo): FieldValues => ({
   title: d.title,
   artist: d.artist,
@@ -44,6 +47,7 @@ export function DemoModal({ demo, coverUrl, queue, backend, genres, tags, onClos
   const [fields, setFields] = useState(() => pick(demo))
   const [busy, setBusy] = useState('')
   const [error, setError] = useState('')
+  const [confirmDelete, setConfirmDelete] = useState(false)
   const coverInput = useRef<HTMLInputElement>(null)
   const { current, playing } = usePlayer()
   const isPlaying = current?.id === demo.id && playing
@@ -91,7 +95,7 @@ export function DemoModal({ demo, coverUrl, queue, backend, genres, tags, onClos
     })
 
   const remove = () => {
-    if (!confirm(`Delete “${demo.title}”? This removes the audio and cover permanently.`)) return
+    setConfirmDelete(false)
     void run('Deleting…', async () => {
       await backend.remove(demo)
       onDeleted(demo)
@@ -152,13 +156,22 @@ export function DemoModal({ demo, coverUrl, queue, backend, genres, tags, onClos
               <button className={`icon-btn fav ${demo.favorite ? 'on' : ''}`} onClick={toggleFav} aria-label="Favorite">
                 <HeartIcon filled={demo.favorite} />
               </button>
-              <button className="icon-btn" onClick={download} aria-label="Download" title="Download original file">
-                <DownloadIcon />
-              </button>
-              <button className="icon-btn danger" onClick={remove} aria-label="Delete" title="Delete demo">
+              {!HOSTED && (
+                <button className="icon-btn" onClick={download} aria-label="Download" title="Download original file">
+                  <DownloadIcon />
+                </button>
+              )}
+              <button className="icon-btn danger" onClick={() => setConfirmDelete(true)} aria-label="Delete" title="Delete demo">
                 <TrashIcon />
               </button>
             </div>
+            {confirmDelete && (
+              <div className="confirm-row" role="alert">
+                <span>Delete this demo and its audio permanently?</span>
+                <button className="btn ghost" onClick={() => setConfirmDelete(false)}>Keep it</button>
+                <button className="btn danger" onClick={remove}>Delete</button>
+              </div>
+            )}
             {sentLabels.length > 0 && (
               <p className="detail-sent">
                 Sent to <b>{sentLabels.length}</b> {sentLabels.length === 1 ? 'label' : 'labels'}:{' '}

@@ -59,6 +59,14 @@ Skip this if you only want the private, on-device vault. The Label Room works ei
 
 > **File size:** Supabase's free plan allows up to **50 MB per file**, which is about 4½ minutes of 16-bit WAV. MP3s are no problem. For longer WAVs, either upgrade to Pro ($25/mo, 100 GB, bigger files under *Storage → Settings*) or upload an MP3 version.
 
+## Hosted version (single file)
+
+```bash
+npm run build:web
+```
+
+This builds `dist-web/demo-vault.html`, one self-contained page with no service worker, ready to host anywhere. On the hosted version, the Download button is hidden because hosted pages can't start file downloads.
+
 ## 3. Put it online (Vercel, free)
 
 1. Go to [vercel.com](https://vercel.com), sign in with GitHub, click **Add New → Project**, and import this repo.

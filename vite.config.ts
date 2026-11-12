@@ -3,7 +3,18 @@ import { defineConfig } from 'vite'
 import { VitePWA } from 'vite-plugin-pwa'
 
 // https://vite.dev/config/
-export default defineConfig({
+// `npm run build:web` (mode "artifact") makes a single self-contained page for
+// hosting: no service worker, every chunk inlined. See scripts/inline.mjs.
+export default defineConfig(({ mode }) => mode === 'artifact' ? {
+  base: './',
+  plugins: [react()],
+  build: {
+    outDir: 'dist-web',
+    cssCodeSplit: false,
+    assetsInlineLimit: 100_000_000,
+    rollupOptions: { output: { inlineDynamicImports: true } },
+  },
+} : {
   plugins: [
     react(),
     VitePWA({
