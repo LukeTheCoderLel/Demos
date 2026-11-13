@@ -15,6 +15,8 @@ export default defineConfig(({ mode }) => mode === 'artifact' ? {
     rollupOptions: { output: { inlineDynamicImports: true } },
   },
 } : {
+  // BASE=/Demos/ for GitHub Pages (npm run build:pages); '/' everywhere else.
+  base: process.env.BASE ?? '/',
   plugins: [
     react(),
     VitePWA({
@@ -27,7 +29,8 @@ export default defineConfig(({ mode }) => mode === 'artifact' ? {
         theme_color: '#050505',
         background_color: '#050505',
         display: 'standalone',
-        start_url: '/',
+        start_url: '.',
+        scope: '.',
         icons: [
           { src: 'icon-192.png', sizes: '192x192', type: 'image/png' },
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png' },

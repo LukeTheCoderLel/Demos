@@ -59,6 +59,16 @@ Skip this if you only want the private, on-device vault. The Label Room works ei
 
 > **File size:** Supabase's free plan allows up to **50 MB per file**, which is about 4½ minutes of 16-bit WAV. MP3s are no problem. For longer WAVs, either upgrade to Pro ($25/mo, 100 GB, bigger files under *Storage → Settings*) or upload an MP3 version.
 
+## Live site (GitHub Pages)
+
+The app is hosted at **https://lukethecoderlel.github.io/Demos/**. To update it after a change:
+
+```bash
+npm run build:pages
+```
+
+Then push the contents of `dist/` to the `gh-pages` branch.
+
 ## Hosted version (single file)
 
 ```bash
